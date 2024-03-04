@@ -6,7 +6,7 @@ const { error } = require("console");
 
 // Display list of all BookInstances.
 exports.bookinstance_list = asyncHandler(async (req, res, next) => {
-  const allBookInstances = await BookInstance.find().populate("book").exec();
+  const allBookInstances = await BookInstance.find().populate("book").sort({book:1}).exec();
 
   res.render("bookinstance_list", {
     title: "Book Instance List",
@@ -105,7 +105,8 @@ exports.bookinstance_delete_get = asyncHandler(async (req, res, next) => {
 
 // Handle BookInstance delete on POST.
 exports.bookinstance_delete_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: BookInstance delete POST");
+  await BookInstance.findByIdAndDelete(req.body.bookinstanceid)
+  res.redirect("/catalog/bookinstances")
 });
 
 // Display BookInstance update form on GET.
