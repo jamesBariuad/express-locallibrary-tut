@@ -9,7 +9,7 @@ block content
   p #[strong ISBN:] #{book.isbn}
   p #[strong Genre: ]
     each val, index in book.genre
-      a(href="/catalog/"+val.url) #{val.name}
+      a(href=val.url) #{val.name}
       if index < book.genre.length - 1
         |,&nbsp;
 
