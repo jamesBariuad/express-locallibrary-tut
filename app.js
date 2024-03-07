@@ -8,6 +8,8 @@ const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const wiki = require('./routes/wiki')
 const catalogRouter = require('./routes/catalog')
+const compression =require("compression")
+const helmet = require('helmet')
 
 const app = express();
 const mongoose = require("mongoose")
@@ -15,12 +17,31 @@ mongoose.set("strictQuery", false)
 const dev_db_url = "mongodb+srv://jamesbariuad:k2o0UL6iIAADbIxF@cluster0.569ylny.mongodb.net/local_library?retryWrites=true&w=majority&appName=Cluster0"
 const mongoDB = process.env.MONGODB_URI || dev_db_url;
 
+// Set CSP headers to allow our Bootstrap and Jquery to be served
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      "script-src": ["'self'", "code.jquery.com", "cdn.jsdelivr.net"],
+    },
+  }),
+);
+// Set up rate limiter: maximum of twenty requests per minute
+const RateLimit = require("express-rate-limit");
+const limiter = RateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 20,
+});
+// Apply rate limiter to all requests
+app.use(limiter);
+
 
 const main= async()=>{
   await mongoose.connect(mongoDB)
 }
 
 main().catch((err)=>console.log(err));
+
+app.use(compression())
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
