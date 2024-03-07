@@ -12,7 +12,8 @@ const catalogRouter = require('./routes/catalog')
 const app = express();
 const mongoose = require("mongoose")
 mongoose.set("strictQuery", false)
-const mongoDB = "mongodb+srv://jamesbariuad:k2o0UL6iIAADbIxF@cluster0.569ylny.mongodb.net/local_library?retryWrites=true&w=majority&appName=Cluster0"
+const dev_db_url = "mongodb+srv://jamesbariuad:k2o0UL6iIAADbIxF@cluster0.569ylny.mongodb.net/local_library?retryWrites=true&w=majority&appName=Cluster0"
+const mongoDB = process.env.MONGODB_URI || dev_db_url;
 
 
 const main= async()=>{

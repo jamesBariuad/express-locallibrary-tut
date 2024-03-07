@@ -2,6 +2,7 @@ const Author = require("../models/author");
 const asyncHandler = require("express-async-handler");
 const Book = require("../models/book");
 const { body, validationResult } = require("express-validator");
+const debug = require("debug")("author");
 
 // Display list of all Authors.
 exports.author_list = asyncHandler(async (req, res, next) => {
@@ -144,6 +145,13 @@ exports.author_delete_post = asyncHandler(async (req, res, next) => {
 exports.author_update_get = asyncHandler(async (req, res, next) => {
   const selectedAuthor = await Author.findById(req.params.id);
 
+  if (author == null) {
+    debug(`id not found on update: ${req.params.id}`);
+    const err = new Error("Author not found");
+    err.status = 404;
+    return next(err);
+  }
+
   res.render("author_form", {
     author: selectedAuthor,
   });
@@ -186,8 +194,7 @@ exports.author_update_post = [
       family_name: req.body.family_name,
       date_of_birth: req.body.date_of_birth,
       date_of_death: req.body.date_of_death,
-      _id:req.params.id
-
+      _id: req.params.id,
     });
 
     if (!errors.isEmpty()) {
@@ -202,7 +209,11 @@ exports.author_update_post = [
       // Data from form is valid.
 
       // Save author.
-      const updatedAuthor = await Author.findByIdAndUpdate(req.params.id,author,{});
+      const updatedAuthor = await Author.findByIdAndUpdate(
+        req.params.id,
+        author,
+        {}
+      );
       // Redirect to new author record.
       res.redirect(updatedAuthor.url);
     }
